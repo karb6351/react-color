@@ -1,22 +1,33 @@
 import * as TypeOfColor from "../Action/colorAction/type";
 
-const initState={
-    color:"blue"
+// #000000 is black
+const initState = {
+    color: "#000000",
+    fetching: false,
+    error: null
 }
- 
-
 export default function(state=initState, {type, payload}){
-
-
     switch (type){
-        case TypeOfColor.GET_API_FOR_COLOR:
-            console.log("This is the payload:", payload)
+        case TypeOfColor.GET_RANDOM_COLOR_REQUEST:
             return{
                 ...state,
-                color:payload      
+                fetching: true,
+                error: null,
             }
-        
-            default:
-                return state;
+        case TypeOfColor.GET_RANDOM_COLOR_SUCCESS:
+            return{
+                ...state,
+                color:payload,
+                fetching: false,
+                error: null,
+            }
+        case TypeOfColor.GET_RANDOM_COLOR_FAILURE:
+            return{
+                ...state,
+                error: payload,
+                fetching: false,
+            }
+        default:
+            return state;
     }
 }

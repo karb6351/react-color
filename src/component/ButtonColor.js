@@ -2,25 +2,40 @@ import React from 'react'
 import { connect } from "react-redux";
 import * as actionFromColorAction from '../Action/colorAction/colorAction'
 
-function ButtonColor({colorFromState, colorChangeFun}){
+function LoadingScreen(){
+    return <h1>Loading....</h1>
+}
+
+function ErrorScreen({ error }){
+    return <h1>{error.message}</h1>
+}
+
+function content(loading, error, color){
+    if (loading)
+        return <LoadingScreen />
+    else if (error)
+        return <ErrorScreen error={error} />
+    else
+        return <h1 style={{ color: color} }>{color}</h1>
+}
+
+function ButtonColor({ color, colorChangeFun, loading, error }){
     return(
         <div>
-            <h1 style={{ color:colorFromState} }> Testing!</h1>
-            <button onClick={()=>colorChangeFun()} >Primary</button>
-            <h1>{colorFromState}</h1>
-            {console.log("The state is:", colorFromState)}
-            {console.log("----------------")}
-
+            {content(loading, error, color)}
+            <button onClick={colorChangeFun} disabled={loading}>Get Color!</button>
         </div>
     );
 }
 
 const mapStateToPros = (state) =>({
-    colorFromState: state.colorApiReducer.color
+    color: state.colorApiReducer.color,
+    loading: state.colorApiReducer.fetching,
+    error: state.colorApiReducer.error,
 })
 
 const mapStateToAction = (dispatch) =>({
-    colorChangeFun : () => dispatch(actionFromColorAction.showColor())
+    colorChangeFun : () => dispatch(actionFromColorAction.getNewColor())
 })
 
 export default connect(mapStateToPros, mapStateToAction)(ButtonColor)
